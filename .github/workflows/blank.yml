@@ -35,4 +35,4 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
           cat /etc/issue
-          whoami
+          ls /usr/lib/aarch64-linux-gnu/alsa-lib
