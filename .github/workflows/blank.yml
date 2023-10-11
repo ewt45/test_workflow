@@ -28,7 +28,7 @@ jobs:
       #安装依赖
       - name: 安装依赖
         run: |
-          sudo apt update && sudo apt install -y alsa-plugins
+          sudo apt update && sudo apt install -y alsa-lib
       # # Runs a single command using the runners shell
       # - name: Run a one-line script
       #   run: echo Hello, world!
