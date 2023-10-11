@@ -24,7 +24,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
+      
+      #安装依赖
+      - name: 安装依赖
+        run: |
+          sudo apt update && sudo apt install -y alsa-plugins
       # # Runs a single command using the runners shell
       # - name: Run a one-line script
       #   run: echo Hello, world!
@@ -35,4 +39,12 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
           cat /etc/issue
-          ls /usr/lib/aarch64-linux-gnu/alsa-lib
+          ls /usr/lib/aarch64-linux-gnu
+
+        # - name: Store unstripped libraries with debug symbols
+            
+      - name: 上传alsa-lib文件夹
+        uses: actions/upload-artifact@v3
+        with:
+          name: alsa-lib
+          path: /usr/lib/aarch64-linux-gnu/alsa-lib/*
