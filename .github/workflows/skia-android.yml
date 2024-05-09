@@ -18,7 +18,7 @@ jobs:
       run: |
         git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git && \
         git clone https://skia.googlesource.com/skia.git
-        
+
     - name: 3 配置环境
       run: |
         export SHARE_DIR=$(pwd) && \
@@ -41,8 +41,11 @@ jobs:
     #       restore-keys: |
     #         ${{ runner.os }}-gradle-
     
+    # 为什么bin/gn会找不到啊，ls bin 里也有gn啊，手动 bin/fetch-gn试试？
+  
     - name: 4 gn配置文件
       run: |
+        cd skia && \
         bin/gn gen out/arm \
         --args='is_component_build=true \
         target_os="android" \
@@ -51,12 +54,13 @@ jobs:
         target_cpu="arm"'
     - name: 5 ninja编译
       run: |
+        cd skia && \
         ninja -C out/arm -j4
     - name: 6 上传到artifacts
       uses: actions/upload-artifact@v4
       with:
         name: libskia.so
-        path: ./out/arm/libskia.so
+        path: ./skia/out/arm/libskia.so
     
 
     - name: 7 上传到release
@@ -71,4 +75,4 @@ jobs:
         body: |
           Based on ${{ github.sha }}
         files: |
-          ./out/arm/libskia.so
+          ./skia/out/arm/libskia.so
