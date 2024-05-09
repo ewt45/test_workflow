@@ -1,0 +1,70 @@
+name: 安卓libskia.so(darkblade)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "安卓libskia.so(darkblade)"
+    runs-on: ubuntu-latest
+    steps:
+    - name: 1 安装依赖
+      run: |
+        sudo apt update && \
+        sudo apt install -y sudo git nano python3 xz-utils bzip2 clang wget unzip &&\
+        wget https://dl.google.com/android/repository/android-ndk-r26d-linux.zip && \
+        unzip android-ndk-r26d-linux.zip
+    - name: 2 克隆仓库
+      run: |
+        git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git && \
+        git clone https://skia.googlesource.com/skia.git && \
+        export SHARE_DIR=$(pwd)
+    - name: 3 配置环境
+      run: |
+        export PATH=$SHARE_DIR/depot_tools:$SHARE_DIR/bin:$PATH && \
+        cd skia && \
+        python3 tools/git-sync-deps && \
+        bin/fetch-ninja
+
+    # - name: 4. 恢复缓存
+    #   uses: actions/cache@v4
+    #   with:
+    #       path: |
+    #         ~/.gradle/caches
+    #         ~/.gradle/wrapper
+    #       key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+
+    #       restore-keys: |
+    #         ${{ runner.os }}-gradle-
+    
+    - name: 4 gn配置文件
+      run: |
+        bin/gn gen out/arm \
+        --args='is_component_build=true \
+        target_os="android" \
+        is_debug=false ndk_api=23  \
+        ndk="./android-ndk-r26d" \
+        target_cpu="arm"'
+    - name: 5 ninja编译
+      run: |
+        ninja -C out/arm -j4
+    - name: 6 上传到artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: libskia.so
+        path: ./out/arm/libskia.so
+    
+
+    - name: 7 上传到release
+      uses: andelf/nightly-release@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: libskia-android
+        name: 'android libskia.so $$'
+        draft: false
+        prerelease: false
+        body: |
+          Based on ${{ github.sha }}
+        files: |
+          ./out/arm/libskia.so
