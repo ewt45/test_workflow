@@ -8,10 +8,12 @@ jobs:
     name: "安卓libskia.so(darkblade)"
     runs-on: ubuntu-latest
     steps:
+    # 卸载gcc再安装clang试试
     - name: 1 安装依赖
       run: |
         sudo apt update && \
-        sudo apt install -y sudo git nano python3 xz-utils bzip2 clang wget unzip &&\
+        sudo apt remove -y gcc && \
+        sudo apt install -y sudo git nano python3 xz-utils bzip2 clang wget unzip && \
         wget https://dl.google.com/android/repository/android-ndk-r26d-linux.zip && \
         unzip android-ndk-r26d-linux.zip
     - name: 2 克隆仓库
@@ -21,13 +23,20 @@ jobs:
 
     - name: 3 配置环境
       run: |
+        echo "\n\n导出环境变量\n\n" && \
         export SHARE_DIR=$(pwd) && \
         export PATH=$SHARE_DIR/depot_tools:$SHARE_DIR/bin:$PATH && \
+        echo "\n\n进入skia文件夹\n\n" && \
         cd skia && \
+        echo "\n\n下载依赖工具\n\n" && \
         python3 tools/git-sync-deps && \
+        echo "\n\n下载ninja\n\n" && \
         bin/fetch-ninja && \
+        echo "\n\n生成gn配置文件\n\n" && \
         bin/gn gen out/arm --args='is_component_build=true target_os="android" is_debug=false ndk_api=23  ndk="./android-ndk-r26d" target_cpu="arm"' && \
+        echo "\n\n使用ninja编译\n\n" && \
         ninja -C out/arm -j4
+        echo "\n\nninja编译完成\n\n"
 
     # - name: 4. 恢复缓存
     #   uses: actions/cache@v4
