@@ -21,7 +21,7 @@ jobs:
         git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git && \
         git clone https://skia.googlesource.com/skia.git
 
-    - name: 3 配置环境
+    - name: 3 配置环境 & 编译
       run: |
         echo -e "\n\n导出环境变量\n\n" && \
         export SHARE_DIR=$(pwd) && \
@@ -34,9 +34,8 @@ jobs:
         bin/fetch-ninja && \
         echo -e "\n\n生成gn配置文件\n\n" && \
         rm -rf out/arm && \
-        export outdir=out/arm && \
-        export argsgn=$outdir/args.gn && \
-        touch $argsgn && \
+        export outdir=out/arm && export argsgn=$outdir/args.gn && \
+        mkdir -p $outdir && touch $argsgn && \
         echo is_component_build=true >> $argsgn && \
         echo target_os=\"android\" >> $argsgn && \
         echo is_debug=false >> $argsgn && \
