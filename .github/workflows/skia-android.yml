@@ -32,11 +32,11 @@ jobs:
         python3 tools/git-sync-deps && \
         echo "\n\n下载ninja\n\n" && \
         bin/fetch-ninja && \
-        echo "\n\n生成gn配置文件\n\n" && \、
+        echo "\n\n生成gn配置文件\n\n" && \
         rm -rf out/arm && \
         bin/gn gen out/arm --args='is_component_build=true target_os="android" is_debug=false ndk_api=23  ndk="../android-ndk-r26d" target_cpu="arm"' && \
         echo "\n\n使用ninja编译\n\n" && \
-        ninja -C out/arm -j4
+        ninja -C out/arm -j4 && \
         echo "\n\nninja编译完成\n\n"
 
     # - name: 4. 恢复缓存
