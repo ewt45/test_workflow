@@ -17,12 +17,12 @@ jobs:
     - name: 2 克隆仓库
       run: |
         git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git && \
-        git clone https://skia.googlesource.com/skia.git && \
+        git clone https://skia.googlesource.com/skia.git
         
     - name: 3 配置环境
       run: |
-        export SHARE_DIR=$(pwd)
-        export PATH=$SHARE_DIR/depot_tools:$SHARE_DIR/bin:$PATH && \
+        export SHARE_DIR=$(pwd) && \
+        export PATH=$SHARE_DIR/depot_tools:$SHARE_DIR/bin:$PATH
         cd skia && \
         python3 tools/git-sync-deps && \
         python3 tools/git-sync-deps && \
