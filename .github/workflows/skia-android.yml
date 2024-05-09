@@ -26,8 +26,9 @@ jobs:
         cd skia && \
         python3 tools/git-sync-deps && \
         bin/fetch-ninja && \
+        bin/fetch-gn && \
         echo "为什么找不到gn？看看bin文件夹里到底都有啥" && \
-        ls bin
+        ls -la bin
 
     # - name: 4. 恢复缓存
     #   uses: actions/cache@v4
