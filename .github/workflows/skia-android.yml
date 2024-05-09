@@ -42,16 +42,12 @@ jobs:
     #         ${{ runner.os }}-gradle-
     
     # 为什么bin/gn会找不到啊，ls bin 里也有gn啊，手动 bin/fetch-gn试试？
-  
+    # 啊因为每个run都是单独的进程，所以上个run里cd skia了不行，这里退回到默认目录了 
+    # 还有 gn的 --args后面不能用斜线换行。。
     - name: 4 gn配置文件
       run: |
         cd skia && \
-        bin/gn gen out/arm \
-        --args='is_component_build=true \
-        target_os="android" \
-        is_debug=false ndk_api=23  \
-        ndk="./android-ndk-r26d" \
-        target_cpu="arm"'
+        bin/gn gen out/arm --args='is_component_build=true target_os="android" is_debug=false ndk_api=23  ndk="./android-ndk-r26d" target_cpu="arm"'
     - name: 5 ninja编译
       run: |
         cd skia && \
