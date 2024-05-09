@@ -18,13 +18,18 @@ jobs:
       run: |
         git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git && \
         git clone https://skia.googlesource.com/skia.git && \
-        export SHARE_DIR=$(pwd)
+        
     - name: 3 配置环境
       run: |
+        export SHARE_DIR=$(pwd)
         export PATH=$SHARE_DIR/depot_tools:$SHARE_DIR/bin:$PATH && \
         cd skia && \
         python3 tools/git-sync-deps && \
-        bin/fetch-ninja
+        python3 tools/git-sync-deps && \
+        python3 tools/git-sync-deps && \
+        bin/fetch-ninja && \
+        python3 tools/git-sync-deps && \
+        python3 tools/git-sync-deps
 
     # - name: 4. 恢复缓存
     #   uses: actions/cache@v4
