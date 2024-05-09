@@ -33,7 +33,6 @@ jobs:
         echo -e "\n\n下载ninja\n\n" && \
         bin/fetch-ninja && \
         echo -e "\n\n生成gn配置文件\n\n" && \
-        rm -rf out/arm && \
         export outdir=out/arm && export argsgn=$outdir/args.gn && \
         mkdir -p $outdir && touch $argsgn && \
         echo is_component_build=true >> $argsgn && \
@@ -69,23 +68,23 @@ jobs:
     # 用.. 也不对，因为ninja编译的时候还会进入out/arm。。。最好想办法写成绝对路径，但是参数里又不支持引用。。
     # 那就导出到环境变量然后拼接吧。。
     
-    - name: 6 上传到artifacts
+    - name: 4 上传到artifacts
       uses: actions/upload-artifact@v4
       with:
         name: libskia.so
         path: ./skia/out/arm/libskia.so
     
 
-    - name: 7 上传到release
-      uses: andelf/nightly-release@main
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: libskia-android
-        name: 'android libskia.so $$'
-        draft: false
-        prerelease: false
-        body: |
-          Based on ${{ github.sha }}
-        files: |
-          ./skia/out/arm/libskia.so
+    # - name: 7 上传到release
+    #   uses: andelf/nightly-release@main
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: libskia-android
+    #     name: 'android libskia.so $$'
+    #     draft: false
+    #     prerelease: false
+    #     body: |
+    #       Based on ${{ github.sha }}
+    #     files: |
+    #       ./skia/out/arm/libskia.so
