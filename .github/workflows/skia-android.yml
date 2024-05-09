@@ -23,21 +23,30 @@ jobs:
 
     - name: 3 配置环境
       run: |
-        echo "\n\n导出环境变量\n\n" && \
+        echo -e "\n\n导出环境变量\n\n" && \
         export SHARE_DIR=$(pwd) && \
         export PATH=$SHARE_DIR/depot_tools:$SHARE_DIR/bin:$PATH && \
-        echo "\n\n进入skia文件夹\n\n" && \
+        echo -e "\n\n进入skia文件夹\n\n" && \
         cd skia && \
-        echo "\n\n下载依赖工具\n\n" && \
+        echo -e "\n\n下载依赖工具\n\n" && \
         python3 tools/git-sync-deps && \
-        echo "\n\n下载ninja\n\n" && \
+        echo -e "\n\n下载ninja\n\n" && \
         bin/fetch-ninja && \
-        echo "\n\n生成gn配置文件\n\n" && \
+        echo -e "\n\n生成gn配置文件\n\n" && \
         rm -rf out/arm && \
-        bin/gn gen out/arm --args='is_component_build=true target_os="android" is_debug=false ndk_api=23  ndk="../android-ndk-r26d" target_cpu="arm"' && \
-        echo "\n\n使用ninja编译\n\n" && \
-        ninja -C out/arm -j4 && \
-        echo "\n\nninja编译完成\n\n"
+        export outdir=out/arm && \
+        export argsgn=$outdir/args.gn && \
+        touch $argsgn && \
+        echo is_component_build=true >> $argsgn && \
+        echo target_os=\"android\" >> $argsgn && \
+        echo is_debug=false >> $argsgn && \
+        echo ndk_api=23 >> $argsgn && \
+        echo target_cpu=\"arm\" >> $argsgn && \
+        echo ndk=\"$SHARE_DIR/android-ndk-r26d\" >> $argsgn && \
+        bin/gn gen $outdir && \
+        echo -e "\n\n使用ninja编译\n\n" && \
+        ninja -C $outdir -j4 && \
+        echo -e "\n\nninja编译完成\n\n"
 
     # - name: 4. 恢复缓存
     #   uses: actions/cache@v4
@@ -58,6 +67,8 @@ jobs:
     # ninja那一步，有个缺/cpu-features.c的报错。根据https://blog.csdn.net/u010536615/article/details/53265597
     # 可能是有残留缓存所以冲突？删除obj/local
     # 啊不对，是我cd skia之后，ndk文件夹目录应该变成上一级的了。。。指定目录写错了
+    # 用.. 也不对，因为ninja编译的时候还会进入out/arm。。。最好想办法写成绝对路径，但是参数里又不支持引用。。
+    # 那就导出到环境变量然后拼接吧。。
     
     - name: 6 上传到artifacts
       uses: actions/upload-artifact@v4
