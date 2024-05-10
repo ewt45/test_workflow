@@ -25,7 +25,7 @@ jobs:
       run: |
         echo -e "\n\n导出环境变量\n\n" && \
         export SHARE_DIR=$(pwd) && \
-        export PATH=$SHARE_DIR/depot_tools:$SHARE_DIR/bin:$PATH && \
+        export PATH=$SHARE_DIR/depot_tools:$PATH && \
         echo -e "\n\n进入skia文件夹\n\n" && \
         cd skia && \
         echo -e "\n\n下载依赖工具\n\n" && \
