@@ -1,0 +1,21 @@
+name: turnip驱动(linux-x86_64)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  job_install_dep:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 安装依赖
+        run: |
+          sed -i 's/Types: deb/Types:deb deb-src/g' /etc/apt/sources.list.d/ubuntu.sources\
+          && apt update\
+          && DEBIAN_FRONTEND=noninteractive apt install -yq nano software-properties-common dirmngr apt-transport-https wget git unzip libxcb-shm0 mesa-utils software-properties-common dirmngr apt-transport-https pipx python3-mako libxcb-shm0-dev libpciaccess-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libxml2-dev graphviz doxygen xsltproc xmlto xutils-dev libxkbcommon-dev libvulkan1 mesa-vulkan-drivers vulkan-tools libclang-cpp18-dev cbindgen command-not-found\
+           && apt-get build-dep mesa -y\ 
+  # build:
+  #   name: "安卓libskia.so(darkblade)"
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #   # 卸载gcc再安装clang试试
+  #   - name: 1 安装依赖
