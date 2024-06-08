@@ -30,7 +30,7 @@ jobs:
       uses: docker/setup-qemu-action@v3
       
     - name: docker开始构建
-      run: docker build -t u24arm-mesa --output type=tar,dest=mesa-turnip.tar --target=out-image .
+      run: docker build --output type=tar,dest=mesa-turnip.tar --target=out-image .
         
     - name: 上传artifact
       uses: actions/upload-artifact@v4.3.3
