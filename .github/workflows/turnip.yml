@@ -1,21 +1,88 @@
-name: turnip驱动(linux-x86_64)
+name: turnip驱动
 
 on:
   workflow_dispatch:
 
+env:
+  mesa-version: mesa-24.1.1
+
 jobs:
-  job_install_dep:
+  linux-arm64:
     runs-on: ubuntu-24.04
     steps:
-      - name: 安装依赖
-        run: |
-          sed -i 's/Types: deb/Types:deb deb-src/g' /etc/apt/sources.list.d/ubuntu.sources\
-          && apt update\
-          && DEBIAN_FRONTEND=noninteractive apt install -yq nano software-properties-common dirmngr apt-transport-https wget git unzip libxcb-shm0 mesa-utils software-properties-common dirmngr apt-transport-https pipx python3-mako libxcb-shm0-dev libpciaccess-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libxml2-dev graphviz doxygen xsltproc xmlto xutils-dev libxkbcommon-dev libvulkan1 mesa-vulkan-drivers vulkan-tools libclang-cpp18-dev cbindgen command-not-found\
-           && apt-get build-dep mesa -y\ 
-  # build:
-  #   name: "安卓libskia.so(darkblade)"
+    
+    - name: 克隆仓库
+      uses: actions/checkout@v4
+      with:
+        ref: linux-arm-turnip #指定checkout的分支
+        
+    - name: 重命名Dockerfile
+      run: mv mesa-turnip/Dockerfile-linux-arm64 Dockerfile
+      
+    - name: 下载mesa源码
+      run: |
+        wget https://gitlab.freedesktop.org/mesa/mesa/-/archive/${{ env.mesa-version }}/mesa-${{ env.mesa-version }}.tar.gz
+        tar xf mesa-${{ env.mesa-version }}.tar.gz
+        mv mesa-${{ env.mesa-version }} mesa
+      #wget https://github.com/multiarch/qemu-user-static/releases/download/v7.2.0-1/qemu-aarch64-static
+        
+    - name: 使用action设置docker qemu #（不需要自己手动放qemu了）
+      uses: docker/setup-qemu-action@v3
+      
+    - name: docker开始构建
+      run: docker build -t u24arm-mesa --output type=tar,dest=mesa-turnip.tar --target=out-image .
+        
+    - name: 上传artifact
+      uses: actions/upload-artifact@v4.3.3
+      with:
+        name: mesa-turnip-linux-arm64
+        path: mesa-turnip.tar
+
+        
+  # linux-x86_64:
   #   runs-on: ubuntu-24.04
   #   steps:
-  #   # 卸载gcc再安装clang试试
-  #   - name: 1 安装依赖
+  #   - name: 安装依赖
+  #     run: |
+  #       sudo sed -i 's/Types: deb/Types:deb deb-src/g' /etc/apt/sources.list.d/ubuntu.sources\
+  #        && sudo apt update\
+  #        && sudo apt-get build-dep mesa -y\
+  #        && sudo apt install -y cbindgen 
+  #   - name: 下载源码
+  #     run: git clone https://gitlab.freedesktop.org/mesa/mesa.git
+  #   - name: 编译
+  #     run: |
+  #       cd mesa\
+  #        && export PWD=$(pwd)\
+  #        && meson setup build-turnip/\
+  #        && meson configure build-turnip/ \
+  #       -D prefix=/host/mesa/installdir \
+  #       -D buildtype=release \
+  #       -D dri3=enabled \
+  #       -D egl=enabled \
+  #       -D platforms=x11 \
+  #       -D gallium-drivers=swrast,virgl,zink,freedreno \
+  #       -D vulkan-drivers=freedreno \
+  #       -D opengl=false \
+  #       -D glx=disabled \
+  #       -D osmesa=true \
+  #       -D gles1=disabled \
+  #       -D gles2=enabled \
+  #       -D glvnd=enabled \
+  #       -D libunwind=disabled \
+  #       -D shared-glapi=enabled \
+  #       -D microsoft-clc=disabled \
+  #       -D valgrind=disabled \
+  #       -D tools=freedreno \
+  #       -D freedreno-kmds=kgsl \
+  #        && ninja -C build-turnip/\
+  #        && sudo ninja -C build-turnip/ install
+
+  #   - name: 删除dri
+  #     run: sudo rm -rf /host/mesa/installdir/lib/x86_64-linux-gnu/dri
+  #   - name: 上传
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: turnip-linux-x86_64
+  #       path: /host/mesa/installdir
+
