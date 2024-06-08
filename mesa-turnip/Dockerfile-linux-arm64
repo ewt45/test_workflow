@@ -1,0 +1,40 @@
+FROM arm64v8/ubuntu:24.04 As dev-image
+WORKDIR /root
+# github action有现成的qemu action，不用手动放了。还是放一下吧，好像这个更快一些
+#COPY qemu-aarch64-static /usr/bin/qemu-aarch64-static
+# 为了能apt build-dep需要添加deb-src。不确定security添加了src会不会有问题，但也不知道怎么排除。
+RUN sed -i 's/Types: deb/Types:deb deb-src/g' /etc/apt/sources.list.d/ubuntu.sources\
+ && apt update\
+ && apt-get build-dep mesa -y\
+ && apt install -y cbindgen python3-certifi python3-pycparser
+ # mesa源码
+ COPY mesa mesa-source
+ # 编译目录
+ RUN cd mesa-source\
+ && meson setup build-turnip/ \
+-D prefix=/root/mesa \
+-D buildtype=release \
+-D dri3=enabled \
+-D platforms=x11 \
+-D gallium-drivers=freedreno \
+-D vulkan-drivers=freedreno \
+-D freedreno-kmds=kgsl \
+-D opengl=false \
+-D glx=disabled \
+-D osmesa=false \
+-D egl=disabled \
+-D gles1=disabled \
+-D gles2=disabled \
+-D glvnd=false \
+-D libunwind=disabled \
+-D shared-glapi=disabled \
+-D microsoft-clc=disabled \
+-D valgrind=disabled \
+# 开始编译
+ && ninja -C build-turnip/\
+# 编译好后安装，收尾工作（例如创建符号链接）
+ && ninja -C build-turnip/ install
+ 
+# 导出编译后的文件
+FROM scratch AS out-image
+COPY --from=dev-image /root/mesa /root/mesa
