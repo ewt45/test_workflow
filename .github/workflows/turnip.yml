@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       mesa-version:
-        description: 'e.g. mesa-24.1.1 \n https://gitlab.freedesktop.org/mesa/mesa/-/tags'
+        description: |
+          e.g. mesa-24.1.1  
+          https://gitlab.freedesktop.org/mesa/mesa/-/tags
         required: false
         default: 'mesa-23.1.1'
         type: string
