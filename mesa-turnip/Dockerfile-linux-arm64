@@ -1,16 +1,15 @@
 FROM arm64v8/ubuntu:24.04 As dev-image
 WORKDIR /root
-# github action有现成的qemu action，不用手动放了。还是放一下吧，好像这个更快一些
-#COPY qemu-aarch64-static /usr/bin/qemu-aarch64-static
 # 为了能apt build-dep需要添加deb-src。不确定security添加了src会不会有问题，但也不知道怎么排除。
 RUN sed -i 's/Types: deb/Types:deb deb-src/g' /etc/apt/sources.list.d/ubuntu.sources\
  && apt update\
  && apt-get build-dep mesa -y\
  && apt install -y cbindgen python3-certifi python3-pycparser
- # mesa源码
- COPY mesa mesa-source
- # 编译目录
- RUN cd mesa-source\
+# mesa源码
+COPY mesa mesa-source
+# 编译目录
+RUN cp -r /usr/include/drm/* /usr/include\
+ && cd mesa-source\
  && meson setup build-turnip/ \
 -D prefix=/root/mesa \
 -D buildtype=release \
