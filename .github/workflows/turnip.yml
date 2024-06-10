@@ -3,12 +3,11 @@ name: turnip驱动
 on:
   workflow_dispatch:
     inputs:
-      mesa-ver:
-        required: true
+      mesa-version:
+        description: 'e.g. mesa-24.1.1 \n https://gitlab.freedesktop.org/mesa/mesa/-/tags'
+        required: false
+        default: 'mesa-23.1.1'
         type: string
-
-env:
-  mesa-version: mesa-24.1.1
 
 jobs:
   linux-arm64:
@@ -25,9 +24,9 @@ jobs:
       
     - name: 下载mesa源码
       run: |
-        wget https://gitlab.freedesktop.org/mesa/mesa/-/archive/${{ env.mesa-version }}/mesa-${{ env.mesa-version }}.tar.gz
-        tar xf mesa-${{ env.mesa-version }}.tar.gz
-        mv mesa-${{ env.mesa-version }} mesa
+        wget https://gitlab.freedesktop.org/mesa/mesa/-/archive/${{ inputs.mesa-version }}/mesa-${{ inputs.mesa-version }}.tar.gz
+        tar xf mesa-${{ inputs.mesa-version }}.tar.gz
+        mv mesa-${{ inputs.mesa-version }} mesa
       #wget https://github.com/multiarch/qemu-user-static/releases/download/v7.2.0-1/qemu-aarch64-static
         
     - name: 使用action设置docker qemu #（不需要自己手动放qemu了）
