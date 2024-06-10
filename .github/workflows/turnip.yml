@@ -18,8 +18,6 @@ jobs:
     
     - name: 克隆仓库
       uses: actions/checkout@v4
-      with:
-        ref: linux-arm-turnip #指定checkout的分支
         
     - name: 重命名Dockerfile
       run: mv mesa-turnip/Dockerfile-linux-arm64 Dockerfile
