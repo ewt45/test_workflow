@@ -5,7 +5,7 @@ on:
     inputs:
       mesa-ver:
         required: true
-          type: string
+        type: string
 
 env:
   mesa-version: mesa-24.1.1
