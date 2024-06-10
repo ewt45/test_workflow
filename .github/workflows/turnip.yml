@@ -2,6 +2,10 @@ name: turnip驱动
 
 on:
   workflow_dispatch:
+    inputs:
+      mesa-ver:
+        required: true
+          type: string
 
 env:
   mesa-version: mesa-24.1.1
