@@ -38,7 +38,7 @@ jobs:
     - name: 上传artifact
       uses: actions/upload-artifact@v4.3.3
       with:
-        name: turnip-linux-arm64-${{ inputs.mesa-version }}
+        name: turnip-linux-arm64-${{ inputs.mesa-version }}-no_dri3
         path: mesa-turnip.tar
 
         
