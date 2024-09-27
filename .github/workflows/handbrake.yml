@@ -1,4 +1,4 @@
-name: Linux Build
+name: HandBrake linux
 
 on: 
   workflow_dispatch:
