@@ -6,11 +6,11 @@ on:
 jobs:
   build:
     name: Build on Ubuntu
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04 
+    #22.04会报错依赖冲突 The following packages have unmet dependencies: libgstreamer1.0-dev : Depends: libunwind-dev
+    # 可以搜索到这个问题，貌似没解决 https://github.com/rust-lang/crates-build-env/issues/125  https://github.com/orgs/community/discussions/113480
     steps:
-
-        # sudo apt remove libunwind-dev -y
-        # sudo apt autoremove -y
+    
     - name: Setup Environment
       run: |
         sudo apt-get update
@@ -18,11 +18,10 @@ jobs:
         sudo apt-get install appstream desktop-file-utils gettext gstreamer1.0-libav gstreamer1.0-plugins-good libgstreamer-plugins-base1.0-dev libgtk-4-dev
         
     - name: Build HandBrake Linux
-      env:
-        DESTDIR: /handbrake/install
       run: |
         git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
         ./configure --launch-jobs=0 --launch
+        export DESTDIR=/handbrake/install
         sudo make --directory=build install
 
     - name: upload
