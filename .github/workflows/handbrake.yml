@@ -11,8 +11,8 @@ jobs:
     # 可以搜索到这个问题，貌似没解决 https://github.com/rust-lang/crates-build-env/issues/125  https://github.com/orgs/community/discussions/113480
     # 唔，是 'libunwind-dev' is incompatible with libc++-14-dev and libc++-dev。 所以先只装 libunwind-dev，会自动卸载冲突的。再正常安装其他依赖就行了
     
-    # env:
-    #   DESTDIR: ${{ github.workspace }}/handbrake-build-install
+    env:
+      HB_INST_DIR: ${{ github.workspace }}/handbrake-build-install
       
     steps:
     - name: test env
@@ -35,7 +35,7 @@ jobs:
       run: |
         git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
         ./configure --launch-jobs=0 --launch
-        DESTDIR=${{ github.workspace }}/handbrake-build-install make --directory=build install
+        DESTDIR=${{ env.HB_INST_DIR }} make --directory=build install
 
 
     # - name: bring back cache
@@ -48,4 +48,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: handbrake
-        path: ${{ github.workspace }}/handbrake-build-install #${{ env.DESTDIR }}
+        path: ${{ env.HB_INST_DIR }}
