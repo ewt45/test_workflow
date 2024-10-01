@@ -2,6 +2,14 @@ name: HandBrake linux
 
 on: 
   workflow_dispatch:
+    inputs:
+        build-version:
+          description: |
+            e.g. 1.8.2
+            https://github.com/HandBrake/HandBrake/tags
+          required: true
+          default: '1.8.2'
+          type: string
 
 jobs:
   build:
@@ -15,11 +23,7 @@ jobs:
       HB_INST_DIR: ${{ github.workspace }}/handbrake-build-install
       
     steps:
-    - name: test env
-      run: |
-        echo DESTDIR是${DESTDIR}
-        echo 如果在run中声明呢 ${{ github.workspace }}/handbrake-build-install
-        
+       
     - name: fix broken deps
       run: |
         sudo apt update
@@ -33,16 +37,9 @@ jobs:
       
     - name: Build HandBrake Linux
       run: |
-        git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
+        git clone -b ${{ inputs.build-version }} https://github.com/HandBrake/HandBrake.git && cd HandBrake
         ./configure --launch-jobs=0 --launch
         DESTDIR=${{ env.HB_INST_DIR }} make --directory=build install
-
-
-    # - name: bring back cache
-    #   uses: actions/cache@v4.0.2
-    #   with:
-    #     path: ${{ github.workspace }}/HandBrake
-    #     key: aaa
 
     - name: upload
       uses: actions/upload-artifact@v4
