@@ -22,25 +22,25 @@ jobs:
         echo DESTDIR是${DESTDIR}
         echo 如果在run中声明呢 ${{ github.workspace }}/handbrake-build-install
         
-    # - name: fix broken deps
-    #   run: |
-    #     sudo apt update
-    #     sudo apt install libunwind-dev
+    - name: fix broken deps
+      run: |
+        sudo apt update
+        sudo apt install libunwind-dev
         
-    # - name: Setup Environment
-    #   run: |
-    #     sudo apt-get update
-    #     sudo apt-get install autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig-dev libfreetype-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libnuma-dev libogg-dev libopus-dev libsamplerate0-dev libspeex-dev libtheora-dev libtool libtool-bin libturbojpeg0-dev libvorbis-dev libx264-dev libxml2-dev libvpx-dev m4 make meson nasm ninja-build patch pkg-config tar zlib1g-dev
-    #     sudo apt-get install appstream desktop-file-utils gettext gstreamer1.0-libav gstreamer1.0-plugins-good libgstreamer-plugins-base1.0-dev libgtk-4-dev
+    - name: Setup Environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig-dev libfreetype-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libnuma-dev libogg-dev libopus-dev libsamplerate0-dev libspeex-dev libtheora-dev libtool libtool-bin libturbojpeg0-dev libvorbis-dev libx264-dev libxml2-dev libvpx-dev m4 make meson nasm ninja-build patch pkg-config tar zlib1g-dev
+        sudo apt-get install appstream desktop-file-utils gettext gstreamer1.0-libav gstreamer1.0-plugins-good libgstreamer-plugins-base1.0-dev libgtk-4-dev
         
-    # - name: Build HandBrake Linux
-    #   run: |
-    #     git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
-    #     ./configure --launch-jobs=0 --launch
-    #     DESTDIR=$HOME/handbrake-build-install make --directory=build install
+    - name: Build HandBrake Linux
+      run: |
+        git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
+        ./configure --launch-jobs=0 --launch
+        make --directory=build install
 
-    # - name: upload
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: handbrake
-    #     path: /handbrake-build-install
+    - name: upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: handbrake
+        path: ${{ env.DESTDIR }}
