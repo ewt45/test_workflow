@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-22.04 
     #22.04会报错依赖冲突 The following packages have unmet dependencies: libgstreamer1.0-dev : Depends: libunwind-dev
     # 可以搜索到这个问题，貌似没解决 https://github.com/rust-lang/crates-build-env/issues/125  https://github.com/orgs/community/discussions/113480
+    # 唔，是 'libunwind-dev' is incompatible with libc++-14-dev and libc++-dev。 所以先只装 libunwind-dev，会自动卸载冲突的。再正常安装其他依赖就行了
     env:
       DESTDIR: $HOME/handbrake-build-install
       
