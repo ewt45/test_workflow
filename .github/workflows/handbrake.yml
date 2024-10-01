@@ -17,10 +17,10 @@ jobs:
     steps:
     - name: test env
       env:
-        DESTDIR: $HOME/handbrake-build-install
+        DESTDIR: ${{ github.workspace }}/handbrake-build-install
       run: |
-        echo DESTDIR是$DESTDIR
-        echo 如果在run中声明呢 $HOME/handbrake-build-install
+        echo DESTDIR是${DESTDIR}
+        echo 如果在run中声明呢 ${{ github.workspace }}/handbrake-build-install
         
     # - name: fix broken deps
     #   run: |
@@ -37,7 +37,7 @@ jobs:
     #   run: |
     #     git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
     #     ./configure --launch-jobs=0 --launch
-    #     DESTDIR=/handbrake-build-install sudo make --directory=build install
+    #     DESTDIR=$HOME/handbrake-build-install make --directory=build install
 
     # - name: upload
     #   uses: actions/upload-artifact@v4
