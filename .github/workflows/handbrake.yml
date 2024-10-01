@@ -6,26 +6,33 @@ on:
 jobs:
   build:
     name: Build on Ubuntu
-    runs-on: ubuntu-24.04 
+    runs-on: ubuntu-22.04 
     #22.04会报错依赖冲突 The following packages have unmet dependencies: libgstreamer1.0-dev : Depends: libunwind-dev
     # 可以搜索到这个问题，貌似没解决 https://github.com/rust-lang/crates-build-env/issues/125  https://github.com/orgs/community/discussions/113480
-    steps:
-    
-    - name: Setup Environment
-      run: |
-        sudo apt-get update
-        sudo apt-get install autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig-dev libfreetype-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libnuma-dev libogg-dev libopus-dev libsamplerate0-dev libspeex-dev libtheora-dev libtool libtool-bin libturbojpeg0-dev libvorbis-dev libx264-dev libxml2-dev libvpx-dev m4 make meson nasm ninja-build patch pkg-config tar zlib1g-dev
-        sudo apt-get install appstream desktop-file-utils gettext gstreamer1.0-libav gstreamer1.0-plugins-good libgstreamer-plugins-base1.0-dev libgtk-4-dev
-        
-    - name: Build HandBrake Linux
-      run: |
-        git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
-        ./configure --launch-jobs=0 --launch
-        export DESTDIR=/handbrake/install
-        sudo make --directory=build install
+    env:
+      DESTDIR: $HOME/handbrake-build-install
 
-    - name: upload
-      uses: actions/upload-artifact@v4
-      with:
-        name: handbrake
-        path: /handbrake/install
+    steps:
+    - name: fix broken deps
+      run: |
+        sudo apt update
+        sudo apt install libgstreamer1.0-dev
+      
+    # steps:
+    # - name: Setup Environment
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig-dev libfreetype-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libnuma-dev libogg-dev libopus-dev libsamplerate0-dev libspeex-dev libtheora-dev libtool libtool-bin libturbojpeg0-dev libvorbis-dev libx264-dev libxml2-dev libvpx-dev m4 make meson nasm ninja-build patch pkg-config tar zlib1g-dev
+    #     sudo apt-get install appstream desktop-file-utils gettext gstreamer1.0-libav gstreamer1.0-plugins-good libgstreamer-plugins-base1.0-dev libgtk-4-dev
+        
+    # - name: Build HandBrake Linux
+    #   run: |
+    #     git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
+    #     ./configure --launch-jobs=0 --launch
+    #     sudo make --directory=build install
+
+    # - name: upload
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: handbrake
+    #     path: $DESTDIR
