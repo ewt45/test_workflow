@@ -16,7 +16,7 @@ jobs:
     - name: fix broken deps
       run: |
         sudo apt update
-        sudo apt install libgstreamer1.0-dev
+        sudo apt install libunwind-dev
       
     # steps:
     # - name: Setup Environment
