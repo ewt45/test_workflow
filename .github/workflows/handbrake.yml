@@ -1,4 +1,4 @@
-name: HandBrake linux
+name: HandBrake Ubuntu22
 
 on: 
   workflow_dispatch:
