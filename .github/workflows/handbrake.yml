@@ -1,30 +1,48 @@
-name: Linux Build
+name: HandBrake Ubuntu22
 
 on: 
   workflow_dispatch:
+    inputs:
+        build-version:
+          description: |
+            e.g. 1.8.2
+            https://github.com/HandBrake/HandBrake/tags
+          required: true
+          default: '1.8.2'
+          type: string
 
 jobs:
   build:
     name: Build on Ubuntu
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04 
+    #22.04会报错依赖冲突 The following packages have unmet dependencies: libgstreamer1.0-dev : Depends: libunwind-dev
+    # 可以搜索到这个问题，貌似没解决 https://github.com/rust-lang/crates-build-env/issues/125  https://github.com/orgs/community/discussions/113480
+    # 唔，是 'libunwind-dev' is incompatible with libc++-14-dev and libc++-dev。 所以先只装 libunwind-dev，会自动卸载冲突的。再正常安装其他依赖就行了
+    
+    env:
+      HB_INST_DIR: ${{ github.workspace }}/handbrake-build-install
+      
     steps:
-
+       
+    - name: fix broken deps
+      run: |
+        sudo apt update
+        sudo apt install libunwind-dev
+        
     - name: Setup Environment
       run: |
         sudo apt-get update
         sudo apt-get install autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig-dev libfreetype-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libnuma-dev libogg-dev libopus-dev libsamplerate0-dev libspeex-dev libtheora-dev libtool libtool-bin libturbojpeg0-dev libvorbis-dev libx264-dev libxml2-dev libvpx-dev m4 make meson nasm ninja-build patch pkg-config tar zlib1g-dev
         sudo apt-get install appstream desktop-file-utils gettext gstreamer1.0-libav gstreamer1.0-plugins-good libgstreamer-plugins-base1.0-dev libgtk-4-dev
-        
+      
     - name: Build HandBrake Linux
-      env:
-        DESTDIR: /handbrake/install
       run: |
-        git clone https://github.com/HandBrake/HandBrake.git && cd HandBrake
+        git clone -b ${{ inputs.build-version }} https://github.com/HandBrake/HandBrake.git && cd HandBrake
         ./configure --launch-jobs=0 --launch
-        sudo make --directory=build install
+        DESTDIR=${{ env.HB_INST_DIR }} make --directory=build install
 
     - name: upload
       uses: actions/upload-artifact@v4
       with:
         name: handbrake
-        path: /handbrake/install
+        path: ${{ env.HB_INST_DIR }}
