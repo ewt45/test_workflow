@@ -1,4 +1,4 @@
-name: HandBrake Ubuntu22
+name: HandBrake Linux
 
 on: 
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    name: Build on Ubuntu
+    name: Ubuntu22构建。未开启很多额外特性
     runs-on: ubuntu-22.04 
     #22.04会报错依赖冲突 The following packages have unmet dependencies: libgstreamer1.0-dev : Depends: libunwind-dev
     # 可以搜索到这个问题，貌似没解决 https://github.com/rust-lang/crates-build-env/issues/125  https://github.com/orgs/community/discussions/113480
@@ -34,11 +34,12 @@ jobs:
         sudo apt-get update
         sudo apt-get install autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig-dev libfreetype-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libnuma-dev libogg-dev libopus-dev libsamplerate0-dev libspeex-dev libtheora-dev libtool libtool-bin libturbojpeg0-dev libvorbis-dev libx264-dev libxml2-dev libvpx-dev m4 make meson nasm ninja-build patch pkg-config tar zlib1g-dev
         sudo apt-get install appstream desktop-file-utils gettext gstreamer1.0-libav gstreamer1.0-plugins-good libgstreamer-plugins-base1.0-dev libgtk-4-dev
-      
+
+      #--enable-qsv --enable-vce --enable-nvenc --enable-nvdec
     - name: Build HandBrake Linux
       run: |
         git clone -b ${{ inputs.build-version }} https://github.com/HandBrake/HandBrake.git && cd HandBrake
-        ./configure --launch-jobs=0 --launch
+        ./configure --launch-jobs=0 --launch 
         DESTDIR=${{ env.HB_INST_DIR }} make --directory=build install
 
     - name: upload
