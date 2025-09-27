@@ -1,0 +1,76 @@
+name: CatLoadingView
+# 安卓依赖 com.roger.catloadinglibrary:catloadinglibrary:1.0.9 仓库没了，手动构建aar
+# 基于此时的代码加以修补 https://github.com/Rogero0o/CatLoadingView/tree/4d41713d1e4818d033d6b19173045d0cdd899765
+
+on:
+  workflow_dispatch:
+  
+
+jobs:
+  apply_patch:
+    runs-on: ubuntu-latest
+
+    steps:
+    # --- 步骤 1: 下载目标仓库的特定提交代码 ---
+    - name: 1. Checkout Target Repository at Specific Commit
+      uses: actions/checkout@v5
+      with:
+        repository: Rogero0o/CatLoadingView
+        ref: 4d41713d1e4818d033d6b19173045d0cdd899765
+        path: '' # 将代码下载到当前文件夹
+
+    # --- 步骤 2: 下载包含 .patch 文件的仓库 ---
+    # 注意：我们使用另一个 checkout 步骤将补丁文件下载到不同的文件夹
+    - name: 2. Checkout Patch Repository
+      uses: actions/checkout@v4
+      with:
+        path: patch-source-code # 将补丁仓库下载到 patch-source-code 文件夹
+
+    # --- 步骤 3: 应用补丁文件 ---
+    - name: 3. Apply Patch to Target Code
+      run: |
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git config user.name "github-actions[bot]"
+
+        echo "ls当前目录："
+        ls
+        echo "ls当前目录/patch-source-code"
+        ls patch-source-code
+        echo "ls当前目录/patch-source-code/CatLoadingView"
+        ls patch-source-code/CatLoadingView
+        echo "为啥不存在"
+        ls patch-source-code/CatLoadingView/*.patch
+
+        echo "准备应用补丁文件"
+        # 使用 am 命令应用补丁
+        git am patch-source-code/CatLoadingView/*.patch
+        
+        echo "补丁应用完成。"
+
+    - name: Set up JDK 8
+      uses: actions/setup-java@v5
+      with:
+        java-version: '8'
+        distribution: 'temurin'
+        cache: 'gradle' # 缓存 Gradle 依赖，加快后续构建速度
+
+
+    # 3. 授予 Gradle 包装器执行权限 (Linux/macOS)
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    # 4. 执行 Gradle 的 assemble 命令
+    # 默认情况下，Gradle 库模块的 assemble 命令会生成 AAR 文件。
+    - name: Build with Gradle
+      run: ./gradlew :catloadinglibrary:assembleRelease
+
+    # 5. 上传 AAR 文件作为构建产物 (Artifact)
+    # AAR 文件通常位于 build/outputs/aar/ 目录下
+    - name: Upload AAR Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        # 您需要根据您的项目结构调整此路径
+        # 通常是 <module-name>/build/outputs/aar/<module-name>-debug.aar
+        name: library-aar
+        path: |
+          catloadinglibrary/build/outputs/*
