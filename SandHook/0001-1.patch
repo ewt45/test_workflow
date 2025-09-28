@@ -1,0 +1,143 @@
+From 4f1bcd3e9892124749113eed6dbe825845520171 Mon Sep 17 00:00:00 2001
+From: ewt45 <79033456+ewt45@users.noreply.github.com>
+Date: Sat, 27 Sep 2025 15:02:27 +0800
+Subject: [PATCH] 1
+
+---
+ annotation/build.gradle                  | 12 ------------
+ build.gradle                             |  3 +--
+ gradle/wrapper/gradle-wrapper.properties |  2 +-
+ hooklib/build.gradle                     | 12 ------------
+ nativehook/build.gradle                  | 12 ------------
+ xposedcompat/build.gradle                | 13 -------------
+ xposedcompat_new/build.gradle            | 12 ------------
+ 7 files changed, 2 insertions(+), 64 deletions(-)
+
+diff --git a/annotation/build.gradle b/annotation/build.gradle
+index 7faab20..d09b6a1 100644
+--- a/annotation/build.gradle
++++ b/annotation/build.gradle
+@@ -11,15 +11,3 @@ ext {
+     bintrayRepo = 'maven'
+     bintrayName = 'swift-sandhook-annotation'
+ }
+-
+-apply plugin: 'com.novoda.bintray-release'
+-
+-publish {
+-    userOrg = rootProject.userOrg
+-    groupId = rootProject.groupId
+-    artifactId = 'hookannotation'
+-    publishVersion = rootProject.publishVersion
+-    desc = rootProject.desc
+-    website = rootProject.website
+-    licences = rootProject.licences
+-}
+diff --git a/build.gradle b/build.gradle
+index be3cf5b..3eaf256 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -7,8 +7,7 @@ buildscript {
+         jcenter()
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:3.5.0'
+-        classpath 'com.novoda:bintray-release:0.9.1'
++        classpath 'com.android.tools.build:gradle:4.0.2'
+ 
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+index 1073fd3..b657307 100644
+--- a/gradle/wrapper/gradle-wrapper.properties
++++ b/gradle/wrapper/gradle-wrapper.properties
+@@ -3,4 +3,4 @@ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-5.4.1-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip
+diff --git a/hooklib/build.gradle b/hooklib/build.gradle
+index ee9d679..67407a4 100644
+--- a/hooklib/build.gradle
++++ b/hooklib/build.gradle
+@@ -38,15 +38,3 @@ dependencies {
+     implementation fileTree(include: ['*.jar'], dir: 'libs')
+     api project(':annotation')
+ }
+-
+-apply plugin: 'com.novoda.bintray-release'
+-
+-publish {
+-    userOrg = rootProject.userOrg
+-    groupId = rootProject.groupId
+-    artifactId = 'hooklib'
+-    publishVersion = rootProject.publishVersion
+-    desc = rootProject.desc
+-    website = rootProject.website
+-    licences = rootProject.licences
+-}
+diff --git a/nativehook/build.gradle b/nativehook/build.gradle
+index 49dccb3..e50848c 100644
+--- a/nativehook/build.gradle
++++ b/nativehook/build.gradle
+@@ -40,15 +40,3 @@ android {
+ dependencies {
+     implementation fileTree(dir: 'libs', include: ['*.jar'])
+ }
+-
+-apply plugin: 'com.novoda.bintray-release'
+-
+-publish {
+-    userOrg = rootProject.userOrg
+-    groupId = rootProject.groupId
+-    artifactId = 'nativehook'
+-    publishVersion = rootProject.publishVersion
+-    desc = rootProject.desc
+-    website = rootProject.website
+-    licences = rootProject.licences
+-}
+diff --git a/xposedcompat/build.gradle b/xposedcompat/build.gradle
+index 17402d1..9ab03a7 100644
+--- a/xposedcompat/build.gradle
++++ b/xposedcompat/build.gradle
+@@ -29,16 +29,3 @@ dependencies {
+     implementation 'com.jakewharton.android.repackaged:dalvik-dx:9.0.0_r3'
+     compileOnly project(':hooklib')
+ }
+-
+-apply plugin: 'com.novoda.bintray-release'
+-
+-publish {
+-    userOrg = rootProject.userOrg
+-    groupId = rootProject.groupId
+-    artifactId = 'xposedcompat'
+-    publishVersion = rootProject.publishVersion
+-    desc = rootProject.desc
+-    website = rootProject.website
+-    licences = rootProject.licences
+-}
+-
+diff --git a/xposedcompat_new/build.gradle b/xposedcompat_new/build.gradle
+index 1029cc2..3892660 100644
+--- a/xposedcompat_new/build.gradle
++++ b/xposedcompat_new/build.gradle
+@@ -42,15 +42,3 @@ dependencies {
+     implementation fileTree(dir: 'libs', include: ['*.jar'])
+     compileOnly project(':hooklib')
+ }
+-
+-apply plugin: 'com.novoda.bintray-release'
+-
+-publish {
+-    userOrg = rootProject.userOrg
+-    groupId = rootProject.groupId
+-    artifactId = 'xposedcompat_new'
+-    publishVersion = rootProject.publishVersion
+-    desc = rootProject.desc
+-    website = rootProject.website
+-    licences = rootProject.licences
+-}
+-- 
+2.43.0
+
